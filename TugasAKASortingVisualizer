@@ -1,0 +1,280 @@
+// Tugas AKA 
+// Imam Prayoga - 1301190346
+// Dika Fajar Ramadan - 1301190260
+// IF 43 10
+// Using JavaScript
+
+<!Doctype html>
+<html lang="en">
+	<head>
+		<title>Sorting Visualizer</title>
+		<style type="text/css">
+			body{
+				background: #2d2d2d;
+				color: #f6f6f6;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				height: 100vh;
+			}
+	
+			.stopwatch {
+				font-size: 5em;
+				font-family: monospace;
+			}
+	
+			ul {
+				margin: 0;
+				padding: 0;
+			}
+	
+			ul li {
+				list-style: none;
+				padding: 10px 0;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>TUGAS AKA PERBANDINGAN SORTING</h1>
+        <h2>Imam Prayoga - 1301190346</h2>
+        <h2>Dika Fajar Ramadan - 1301190</h2>
+
+		<div>
+		<button id='ref' onclick= 'ref(),stop()'>Shuffle</button>
+		<button id='start' onclick= 'bubble(1),start()'>Bubble Sort</button>
+		<button id='select' onclick= 'select(1),start()'>Selection Sort</button>
+		<canvas id="myCanvas" width = '2000' height='600' style='border: 2px solid silver; background: linear-gradient(0.10turn, #ebf8e1, #f69d3c, #ebf8e1);'/>
+		</div>
+		<div class='row'>
+			<div class='col' id = 'display'><label id='lblPass'>0 </label><label> Passes </label><label> | </label><label id='lblDisplay'>0 </label><label> Swapps</label></div>
+		</div>
+		<div class='stopwatch'>00:00:00</div>
+		<script>
+
+		var ms = 0, s = 0, m = 0;
+		var timer;
+
+		var stopwatchEl = document.querySelector('.stopwatch');
+
+			var arr = [];
+			var value =1;
+			for(var i = 0; i<= 100; i++){
+				arr.push(value);
+				value+=5;
+			}
+
+			function start() {
+			if(!timer) {
+				timer = setInterval(run, 10);
+			}
+		}
+
+		function run() {
+			stopwatchEl.textContent = getTimer();
+			ms++;
+			if(ms == 100) {
+				ms = 0;
+				s++;
+			}
+			if(s == 60) {
+				s = 0;
+				m++;
+			}
+		}
+
+			function start() {
+			if(!timer) {
+				timer = setInterval(run, 10);
+			}
+		}
+
+		function run() {
+			stopwatchEl.textContent = getTimer();
+			ms++;
+			if(ms == 100) {
+				ms = 0;
+				s++;
+			}
+			if(s == 60) {
+				s = 0;
+				m++;
+			}
+		}
+
+		function getTimer() {
+			return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s) + ":" + (ms < 10 ? "0" + ms : ms);
+		}
+
+		function stopTimer() {
+			clearInterval(timer);
+			timer = false;
+		}
+
+		function stop() {
+			stopTimer();
+			ms = 0;
+			s = 0;
+			m = 0;
+			stopwatchEl.textContent = getTimer();
+		}
+
+
+
+			function draw(array, color) {
+			  	if (canvas.getContext) {
+			    	var ctx = canvas.getContext('2d');
+					var width = 16;
+					var currX = 10;
+					ctx.clearRect(0, 0, canvas.width, canvas.height);	
+			    	for(var i = 0; i < array.length; i++){
+			    		if(i == color){
+			    			ctx.fillStyle = 'red';
+			    		}else{
+			    			ctx.fillStyle = 'blue';
+			    		}
+						var h = array[i];
+						ctx.font = 'bold 10px serif';
+  						ctx.fillText(array[i], currX, canvas.height - (h + 16) );
+						ctx.fillRect(currX, canvas.height - (h+12), width, h);
+						ctx.fillText(i+1, currX, canvas.height - (2) );
+						currX += width + 2;
+					}
+			  	}
+			}
+
+
+
+			function* bubbleSort(array) {
+				document.getElementById("lblPass").innerHTML = 0;
+				document.getElementById("lblDisplay").innerHTML = 0;
+			  	var swapped;
+			  	var step = 0;
+				var pass = 1;
+
+			  		do{
+				    	swapped = false;
+				    	document.getElementById("lblPass").innerHTML = pass;
+				    	for (var i = 0; i < array.length - 1; i++) {
+				      		if (array[i] > array[i + 1]) {
+				        		var temp = array[i];
+				        		array[i] = array[i + 1];
+				        		array[i + 1] = temp;
+				        		swapped = true;
+				        		step++;
+				        		draw(array, i);
+				        		document.getElementById("lblDisplay").innerHTML = step;
+				        		yield swapped;
+				      		}
+				    	}
+				    	pass++
+				  	} while (swapped);
+				  clearInterval(timer);
+			timer = false;
+			}
+
+			
+			function* selectSort(array){
+				document.getElementById("lblPass").innerHTML = 0;
+				document.getElementById("lblDisplay").innerHTML = 0;
+			    var len = array.length;
+			    var min;
+			    var i = 0;
+			    var step =0;
+			    	do{
+				        min = i;
+				        document.getElementById("lblPass").innerHTML = i+1;
+				        for (j=i+1; j < len; j++){
+				            if (array[j] < array[min]){
+				                min = j;
+				            } 
+				        }
+					        if (i != min){
+					            var temp = array[i];
+					        	array[i] = array[min];
+					        	array[min] = temp;
+					        	step++;
+					        	document.getElementById("lblDisplay").innerHTML = step;
+					        } 
+					     draw(array, i);
+				        i++;
+				        yield i;
+					}while(i < len);
+					clearInterval(timer);
+			timer = false;
+			}
+
+
+			function bubble(option){
+				canvas = document.getElementById('myCanvas');
+				var sort = bubbleSort(arr, option);
+
+  				function anim(ar){
+    				requestAnimationFrame(anim);
+    				sort.next();
+				  }
+				  setTimeout(anim(arr), 2000);
+			}
+
+
+			function select(option){
+				
+					canvas = document.getElementById('myCanvas');
+					var sort = selectSort(arr, option);
+	  				function anim(ar){
+	    				requestAnimationFrame(anim);
+	    				sort.next();
+					  }
+					  setTimeout(anim(arr), 2000);
+			}
+
+			function ref(){
+				shuffle(arr);
+				draw(arr, 0);
+			}
+
+			function shuffle(array) {
+				  var currentIndex = array.length, temporaryValue, randomIndex;
+
+				  while (0 !== currentIndex) {
+
+				    randomIndex = Math.floor(Math.random() * currentIndex);
+				    currentIndex -= 1;
+
+				    temporaryValue = array[currentIndex];
+				    array[currentIndex] = array[randomIndex];
+				    array[randomIndex] = temporaryValue;
+				 }
+				 return array;
+			}
+
+			window.onload = function(){
+				canvas = document.getElementById('myCanvas','mycanvas1');
+				shuffle(arr);
+				draw(arr, 0);
+			}
+		</script>
+		<style type="text/css">
+			button{
+				background: #f69d3c;
+				color: white;
+				font-size: 14px;
+				font-style: bold;
+				border-radius: 5px;
+				padding: 5px;
+			}
+			#display{
+				width: 30%;
+				margin: auto;
+				background: #f69d3c;
+				font-size: 28px;
+				font-style: bold;
+				border-radius: 8px;
+				padding: 2px;
+				text-align: center;
+                border: 4px solid gray
+                position: relative;
+			}
+		</style>
+	</body>
+</html>
